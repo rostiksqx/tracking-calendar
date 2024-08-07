@@ -1,9 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using TrackingCalendar.Components;
+using TrackingCalendar.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("ApplicationDbContext"));
+});
 
 var app = builder.Build();
 
