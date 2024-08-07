@@ -10,7 +10,7 @@ public class ApplicationDbContext : DbContext
         
     }
     
-    public DbSet<Task> Tasks { get; set; }
+    public DbSet<Task> Tasks { get; init; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
