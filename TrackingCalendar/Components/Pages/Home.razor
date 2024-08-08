@@ -10,7 +10,12 @@
 
 <div class="border" style="padding: 20px;">
     <TaskItemForm OnItemAdded="@TaskChanged" />
+    @if (ShowUpdateForm)
+    {
+        <TaskUpdateForm OnItemUpdated="@TaskChanged" selectedTask="selectedTask" ShowUpdateForm="ShowUpdateForm" ShowUpdateFormChanged="@(value => ShowUpdateForm = value)" />
+    }
 </div>
+
 
 <table class="table">
     <thead>
@@ -28,12 +33,17 @@
     {
         <tr>
             <td>@task.Title</td>
-            <td>@task.Description</td>
+            <td>
+                <div style="display: -webkit-box;max-width: 150px;-webkit-line-clamp: 3;-webkit-box-orient: vertical;overflow: hidden;">
+                    @task.Description
+                </div>
+            </td>
             <td>@task.StartDate.ToShortDateString()</td>
             <td>@task.EndDate.ToShortDateString()</td>
             <td>@(task.IsCompleted ? "Completed" : "Uncompleted")</td>
             <td>
                 <button class="btn btn-primary" @onclick="() => CompleteTask(task)" >@(task.IsCompleted ? "UnComplete" : "Complete")</button>
+                <button class="btn btn-primary" @onclick="() => EditTask(task)" >Edit</button>
                 <button class="btn btn-danger">Delete</button>
             </td>
         </tr>
@@ -44,6 +54,8 @@
 @code
 {
     private List<Task> _tasks = [];
+    private Task selectedTask = new Task();
+    private bool ShowUpdateForm = false;
 
     protected override async System.Threading.Tasks.Task OnInitializedAsync()
     {
@@ -60,5 +72,11 @@
     {
         task.IsCompleted = !task.IsCompleted;
         await TaskService.UpdateTask(task);
+    }
+    
+    private void EditTask(Task task)
+    {
+        selectedTask = task;
+        ShowUpdateForm = true;
     }
 }

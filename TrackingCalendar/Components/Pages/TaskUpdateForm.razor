@@ -1,0 +1,67 @@
+﻿@using TrackingCalendar.Services
+@using Task = TrackingCalendar.Models.Entity.Task
+@inject ITaskService TaskService
+
+
+<div style="display: flex; justify-content: space-between">
+    <h4 style="padding-top: 10px">Update Task</h4>
+    <button class="btn" @onclick="CloseForm">X</button>
+</div>
+<EditForm OnValidSubmit="ItemUpdated" Model="selectedTask" FormName="TaskItemForm">
+    <div class="page">
+        <label for="title" style="margin-right: 10px">Title:</label>
+        <InputText id="title" @bind-Value="selectedTask.Title" class="form-control" style="margin-right: 10px"/>
+
+        <label for="description" style="margin: 10px 10px 10px 0">Description</label>
+        <InputText id="description" @bind-Value="selectedTask.Description" class="form-control" style="margin-right: 10px"/>
+
+        <label for="startDate" style="margin: 10px 10px 10px 0;">Start Date:</label>
+        <InputDate id="startDate" @bind-Value="selectedTask.StartDate" class="form-control" style="margin-right: 10px"/>
+
+        <label for="endDate" style="margin: 10px 10px 10px 0">End Date:</label>
+        <InputDate id="endDate" @bind-Value="selectedTask.EndDate" class="form-control" style="margin-right: 10px"/>
+
+        <div style="margin-top: 10px">
+            <button type="submit" class="btn btn-primary" style="margin-right: 10px">Update</button>
+            <input type="reset" class="btn btn-secondary" value="Clear"/>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public required Action OnItemUpdated { get; set; }
+    
+    [Parameter]
+    public required Task selectedTask { get; set; }
+    
+    [Parameter]
+    public required bool ShowUpdateForm { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> ShowUpdateFormChanged { get; set; }
+    
+    private async System.Threading.Tasks.Task ItemUpdated()
+    {
+        var updatedTask = new Task
+        {
+            Id = selectedTask.Id,
+            Title = selectedTask.Title,
+            Description = selectedTask.Description,
+            StartDate = DateTime.SpecifyKind(selectedTask.StartDate, DateTimeKind.Utc),
+            EndDate = DateTime.SpecifyKind(selectedTask.EndDate, DateTimeKind.Utc)
+        };
+
+        await TaskService.UpdateTask(updatedTask);
+        
+        await ShowUpdateFormChanged.InvokeAsync(false);
+
+        OnItemUpdated?.Invoke();
+    }
+    
+    private async void CloseForm()
+    {
+        await ShowUpdateFormChanged.InvokeAsync(false);
+    }
+} 
