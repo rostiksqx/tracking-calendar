@@ -1,0 +1,43 @@
+﻿@using TrackingCalendar.Services
+@using Task = TrackingCalendar.Models.Entity.Task
+@inject ITaskService TaskService
+
+
+<EditForm Model="@_newTask" OnSubmit="@ItemAdded" FormName="TaskItemForm">
+    <div class="page" >
+        <div style="margin-right: 10px">Title:</div>
+        <input @bind="_newTask.Title" type="text" class="form-control" style="margin-right: 10px"/>
+        
+        <div style="margin: 10px 10px 10px 0">Description</div>
+        <input @bind="_newTask.Description" type="text" class="form-control" style="margin-right: 10px"/>
+        
+        <div style="margin: 10px 10px 10px 0;">Start Date:</div>
+        <input @bind="_newTask.StartDate" type="date" class="form-control" style="margin-right: 10px"/>
+        
+        <div style="margin: 10px 10px 10px 0">End Date:</div>
+        <Input @bind="_newTask.EndDate" type="date" class="form-control" style="margin-right: 10px"/>
+        
+        <div style="margin-top: 10px">
+            <input type="submit" class="btn btn-primary" style="margin-right: 10px" value="Add"/>
+            <input type="reset" class="btn btn-secondary" value="Clear"/>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public required Action OnItemAdded { get; set; }
+
+    private Task _newTask = new Task();
+
+    private async void ItemAdded()
+    {
+        await TaskService.AddTask(_newTask);
+
+        if (OnItemAdded != null)
+        {
+            OnItemAdded();
+        }
+    }
+
+}
