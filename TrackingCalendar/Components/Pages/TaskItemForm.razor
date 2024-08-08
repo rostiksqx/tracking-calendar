@@ -2,42 +2,60 @@
 @using Task = TrackingCalendar.Models.Entity.Task
 @inject ITaskService TaskService
 
-
-<EditForm Model="@_newTask" OnSubmit="@ItemAdded" FormName="TaskItemForm">
-    <div class="page" >
-        <div style="margin-right: 10px">Title:</div>
-        <input @bind="_newTask.Title" type="text" class="form-control" style="margin-right: 10px"/>
-        
-        <div style="margin: 10px 10px 10px 0">Description</div>
-        <input @bind="_newTask.Description" type="text" class="form-control" style="margin-right: 10px"/>
-        
-        <div style="margin: 10px 10px 10px 0;">Start Date:</div>
-        <input @bind="_newTask.StartDate" type="date" class="form-control" style="margin-right: 10px"/>
-        
-        <div style="margin: 10px 10px 10px 0">End Date:</div>
-        <Input @bind="_newTask.EndDate" type="date" class="form-control" style="margin-right: 10px"/>
-        
-        <div style="margin-top: 10px">
-            <input type="submit" class="btn btn-primary" style="margin-right: 10px" value="Add"/>
-            <input type="reset" class="btn btn-secondary" value="Clear"/>
-        </div>
+@if (ShowForm)
+{
+    <div style="display: flex; justify-content: space-between">
+        <h4 style="padding-top: 10px">New Task</h4>
+        <button class="btn" @onclick="() => ShowForm = false">X</button>
     </div>
-</EditForm>
+    <EditForm OnValidSubmit="ItemAdded" Model="selectedTask" FormName="TaskItemForm">
+        <div class="page">
+            <label for="title" style="margin-right: 10px">Title:</label>
+            <InputText id="title" @bind-Value="selectedTask.Title" class="form-control" style="margin-right: 10px"/>
+
+            <label for="description" style="margin: 10px 10px 10px 0">Description</label>
+            <InputText id="description" @bind-Value="selectedTask.Description" class="form-control" style="margin-right: 10px"/>
+
+            <label for="startDate" style="margin: 10px 10px 10px 0;">Start Date:</label>
+            <InputDate id="startDate" @bind-Value="selectedTask.StartDate" class="form-control" style="margin-right: 10px"/>
+
+            <label for="endDate" style="margin: 10px 10px 10px 0">End Date:</label>
+            <InputDate id="endDate" @bind-Value="selectedTask.EndDate" class="form-control" style="margin-right: 10px"/>
+
+            <div style="margin-top: 10px">
+                <button type="submit" class="btn btn-primary" style="margin-right: 10px">Add</button>
+                <input type="reset" class="btn btn-secondary" value="Clear"/>
+            </div>
+        </div>
+    </EditForm>
+}
+else 
+{
+    <button class="btn btn-primary" @onclick="() => ShowForm = true">Add Task</button>
+}
 
 @code {
     [Parameter]
     public required Action OnItemAdded { get; set; }
 
-    private Task _newTask = new Task();
+    private bool ShowForm = false;
+    
+    private Task selectedTask = new Task();
 
-    private async void ItemAdded()
+    private async System.Threading.Tasks.Task ItemAdded()
     {
-        await TaskService.AddTask(_newTask);
-
-        if (OnItemAdded != null)
+        var newTask = new Task
         {
-            OnItemAdded();
-        }
-    }
+            Title = selectedTask.Title,
+            Description = selectedTask.Description,
+            StartDate = DateTime.SpecifyKind(selectedTask.StartDate, DateTimeKind.Utc),
+            EndDate = DateTime.SpecifyKind(selectedTask.EndDate, DateTimeKind.Utc)
+        };
+        
+        await TaskService.AddTask(newTask);
+        selectedTask = new Task();
+        ShowForm = false;
 
+        OnItemAdded?.Invoke();
+    }
 }

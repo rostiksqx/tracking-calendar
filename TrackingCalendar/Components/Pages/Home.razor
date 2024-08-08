@@ -2,13 +2,13 @@
 @using TrackingCalendar.Services
 @using Task = TrackingCalendar.Models.Entity.Task
 @inject ITaskService TaskService
+@rendermode InteractiveServer
 
 <PageTitle>Task Tracking Calendar</PageTitle>
 
 <h3>Task Calendar</h3>
 
 <div class="border" style="padding: 20px;">
-    <h4>New Task</h4>
     <TaskItemForm OnItemAdded="@TaskChanged" />
 </div>
 
@@ -19,7 +19,7 @@
         <th>Description</th>
         <th>Start Date</th>
         <th>End Date</th>
-        <th>Completed</th>
+        <th>Completed/Uncompleted</th>
         <th>Action</th>
     </tr>
     </thead>
