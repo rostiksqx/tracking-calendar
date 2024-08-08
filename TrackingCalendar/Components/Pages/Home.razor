@@ -44,7 +44,7 @@
             <td>
                 <button class="btn btn-primary" @onclick="() => CompleteTask(task)" >@(task.IsCompleted ? "UnComplete" : "Complete")</button>
                 <button class="btn btn-primary" @onclick="() => EditTask(task)" >Edit</button>
-                <button class="btn btn-danger">Delete</button>
+                <button class="btn btn-danger" @onclick="() => DeleteTask(task.Id)">Delete</button>
             </td>
         </tr>
     }
@@ -78,5 +78,11 @@
     {
         selectedTask = task;
         ShowUpdateForm = true;
+    }
+    
+    private async void DeleteTask(Guid id)
+    {
+        await TaskService.DeleteTask(id);
+        TaskChanged();
     }
 }
