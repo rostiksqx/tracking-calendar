@@ -17,6 +17,7 @@ public class TaskService : ITaskService
     {
         return await _dbContext.Tasks
             .AsNoTracking()
+            .OrderByDescending(t => t.StartDate)
             .ToListAsync();
     }
     
