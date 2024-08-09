@@ -42,7 +42,7 @@
             <td>@task.EndDate.ToShortDateString()</td>
             <td>@(task.IsCompleted ? "Completed" : "Uncompleted")</td>
             <td>
-                <button class="btn btn-primary" @onclick="() => CompleteTask(task)" >@(task.IsCompleted ? "UnComplete" : "Complete")</button>
+                <button class="btn btn-primary" @onclick="() => ToggleCompleteTask(task)" >@(task.IsCompleted ? "UnComplete" : "Complete")</button>
                 <button class="btn btn-primary" @onclick="() => EditTask(task)" >Edit</button>
                 <button class="btn btn-danger" @onclick="() => DeleteTask(task.Id)">Delete</button>
             </td>
@@ -68,7 +68,7 @@
         StateHasChanged();
     }
     
-    private async void CompleteTask(Task task)
+    private async void ToggleCompleteTask(Task task)
     {
         task.IsCompleted = !task.IsCompleted;
         await TaskService.UpdateTask(task);

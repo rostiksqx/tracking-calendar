@@ -49,11 +49,3 @@ h1:focus {
 .darker-border-checkbox.form-check-input {
     border-color: #929292;
 }
-
-.truncate-3-lines {
-    display: -webkit-box;
-    max-width: 200px;
-    -webkit-line-clamp: 4;
-    -webkit-box-orient: vertical;
-    overflow: hidden;  
-}
